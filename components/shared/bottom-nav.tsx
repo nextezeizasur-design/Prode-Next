@@ -14,8 +14,8 @@ export function BottomNav({ isAdmin }: BottomNavProps) {
 
   const items = [
     { href: "/fixture", label: "Fixture", icon: CalendarDays },
-    { href: "/ranking", label: "Rankings", icon: Trophy },
-    { href: "/my-stats", label: "My stats", icon: BarChart2 },
+    { href: "/ranking", label: "Ranking", icon: Trophy },
+    { href: "/my-stats", label: "Mis stats", icon: BarChart2 },
     ...(isAdmin ? [{ href: "/admin", label: "Admin", icon: Settings }] : []),
   ];
 
@@ -30,17 +30,10 @@ export function BottomNav({ isAdmin }: BottomNavProps) {
               href={href}
               className={cn(
                 "flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-colors min-w-0",
-                isActive
-                  ? "text-blue-600 dark:text-blue-400"
-                  : "text-muted-foreground"
+                isActive ? "text-blue-400" : "text-muted-foreground"
               )}
             >
-              <Icon
-                className={cn(
-                  "h-5 w-5 transition-transform",
-                  isActive && "scale-110"
-                )}
-              />
+              <Icon className={cn("h-5 w-5 transition-transform", isActive && "scale-110")} />
               <span className="text-[10px] font-medium truncate">{label}</span>
             </Link>
           );
