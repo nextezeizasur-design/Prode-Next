@@ -84,10 +84,8 @@ export default async function FixturePage() {
     <div className="space-y-8 pb-8">
       {/* Semifinalist picks */}
       <SemifinalistPicksCard
-        teams={teams}
-        selectedTeamIds={Array.from(semiTeamIds)}
-        userId={user.id}
-        locked={semiLocked}
+        currentPicks={semiPicks.map(s => ({ teamId: s.teamId, team: s.team, isCorrect: s.isCorrect, bonusPoints: s.bonusPoints }))}
+        allTeams={teams.map(t => ({ id: t.id, name: t.name, shortName: t.shortName ?? t.code ?? t.name.slice(0,3), flagUrl: t.flagUrl }))}
       />
 
       {/* Phases */}
@@ -97,8 +95,7 @@ export default async function FixturePage() {
           phase={phase}
           label={PHASE_LABELS[phase]}
           matches={byPhase[phase]}
-          predMap={predMap}
-          userId={user.id}
+          predictionMap={predMap}
         />
       ))}
     </div>
