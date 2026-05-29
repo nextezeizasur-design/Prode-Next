@@ -12,20 +12,19 @@ import { registerAction, checkNicknameAction } from "@/actions/auth";
 import { useToast } from "@/hooks/use-toast";
 
 const schema = z.object({
-  firstName: z.string().min(2, "At least 2 characters"),
-  lastName: z.string().min(2, "At least 2 characters"),
+  firstName: z.string().min(2, "Mínimo 2 caracteres"),
+  lastName: z.string().min(2, "Mínimo 2 caracteres"),
   nickname: z
     .string()
-    .min(3, "At least 3 characters")
-    .max(20, "Max 20 characters")
-    .regex(/^[a-zA-Z0-9_]+$/, "Letters, numbers, underscores only"),
-  email: z.string().email("Invalid email"),
-  password: z.string().min(8, "At least 8 characters"),
+    .min(3, "Mínimo 3 caracteres")
+    .max(20, "Máximo 20 caracteres")
+    .regex(/^[a-zA-Z0-9_]+$/, "Solo letras, números y guiones bajos"),
+  email: z.string().email("Email inválido"),
+  password: z.string().min(8, "Mínimo 8 caracteres"),
   curso: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
-
 type NicknameStatus = "idle" | "checking" | "available" | "taken";
 
 export default function RegisterPage() {
@@ -38,7 +37,6 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const checkNickname = useDebouncedCallback(async (value: string) => {
@@ -50,18 +48,15 @@ export default function RegisterPage() {
 
   const onSubmit = (data: FormData) => {
     if (nicknameStatus === "taken") {
-      toast({ title: "That nickname is already taken", variant: "destructive" });
+      toast({ title: "Ese nickname ya está en uso", variant: "destructive" });
       return;
     }
-
     startTransition(async () => {
       const formData = new FormData();
       Object.entries(data).forEach(([k, v]) => v && formData.set(k, v as string));
-
       const result = await registerAction(formData);
-
       if (result.success) {
-        toast({ title: "Account created! Welcome 🎉" });
+        toast({ title: "¡Cuenta creada! Bienvenido 🎉" });
         router.push("/fixture");
         router.refresh();
       } else {
@@ -73,121 +68,89 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0F172A] px-4 py-8">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600">
             <span className="text-white font-bold text-xl">N</span>
           </div>
-          <h1 className="text-xl font-bold text-white">Create your account</h1>
-          <p className="mt-1 text-sm text-slate-400">Join Next World Cup 2026</p>
+          <h1 className="text-xl font-bold text-white">Crear cuenta</h1>
+          <p className="mt-1 text-sm text-slate-400">Unite al Next World Cup 2026</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Name row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                First name
-              </label>
+              <label className="block text-sm font-medium text-slate-300 mb-1.5">Nombre</label>
               <input
                 {...register("firstName")}
                 placeholder="Ana"
                 className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
               />
-              {errors.firstName && (
-                <p className="mt-1 text-xs text-red-400">{errors.firstName.message}</p>
-              )}
+              {errors.firstName && <p className="mt-1 text-xs text-red-400">{errors.firstName.message}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                Last name
-              </label>
+              <label className="block text-sm font-medium text-slate-300 mb-1.5">Apellido</label>
               <input
                 {...register("lastName")}
                 placeholder="García"
                 className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
               />
-              {errors.lastName && (
-                <p className="mt-1 text-xs text-red-400">{errors.lastName.message}</p>
-              )}
+              {errors.lastName && <p className="mt-1 text-xs text-red-400">{errors.lastName.message}</p>}
             </div>
           </div>
 
-          {/* Nickname */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">
-              Nickname <span className="text-slate-500">(public, unique)</span>
+              Nickname <span className="text-slate-500">(público, único)</span>
             </label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">@</span>
               <input
-                {...register("nickname", {
-                  onChange: (e) => checkNickname(e.target.value),
-                })}
+                {...register("nickname", { onChange: (e) => checkNickname(e.target.value) })}
                 placeholder="goat_predictor"
                 className="w-full rounded-xl border border-slate-700 bg-slate-800/50 pl-8 pr-10 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {nicknameStatus === "checking" && (
-                  <Loader2 className="h-4 w-4 text-slate-400 animate-spin" />
-                )}
-                {nicknameStatus === "available" && (
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                )}
-                {nicknameStatus === "taken" && (
-                  <XCircle className="h-4 w-4 text-red-400" />
-                )}
+                {nicknameStatus === "checking" && <Loader2 className="h-4 w-4 text-slate-400 animate-spin" />}
+                {nicknameStatus === "available" && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+                {nicknameStatus === "taken" && <XCircle className="h-4 w-4 text-red-400" />}
               </div>
             </div>
-            {errors.nickname && (
-              <p className="mt-1 text-xs text-red-400">{errors.nickname.message}</p>
-            )}
-            {nicknameStatus === "taken" && (
-              <p className="mt-1 text-xs text-red-400">Nickname already taken</p>
-            )}
-            {nicknameStatus === "available" && (
-              <p className="mt-1 text-xs text-green-400">Nickname available ✓</p>
-            )}
+            {errors.nickname && <p className="mt-1 text-xs text-red-400">{errors.nickname.message}</p>}
+            {nicknameStatus === "taken" && <p className="mt-1 text-xs text-red-400">Nickname no disponible</p>}
+            {nicknameStatus === "available" && <p className="mt-1 text-xs text-green-400">Nickname disponible ✓</p>}
           </div>
 
-          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
             <input
               {...register("email")}
               type="email"
               autoComplete="email"
-              placeholder="you@email.com"
+              placeholder="vos@email.com"
               className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
             />
-            {errors.email && (
-              <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
           </div>
 
-          {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1.5">Contraseña</label>
             <input
               {...register("password")}
               type="password"
               autoComplete="new-password"
-              placeholder="Min. 8 characters"
+              placeholder="Mín. 8 caracteres"
               className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
             />
-            {errors.password && (
-              <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
-            )}
+            {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
           </div>
 
-          {/* Curso (optional) */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">
-              Class <span className="text-slate-500">(optional)</span>
+              Curso <span className="text-slate-500">(opcional)</span>
             </label>
             <input
               {...register("curso")}
-              placeholder="e.g. Upper Intermediate B"
+              placeholder="ej. Upper Intermediate B"
               className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
             />
           </div>
@@ -197,14 +160,14 @@ export default function RegisterPage() {
             disabled={isPending || nicknameStatus === "taken"}
             className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {isPending ? "Creating account..." : "Create account"}
+            {isPending ? "Creando cuenta..." : "Crear cuenta"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-400">
-          Already have an account?{" "}
+          ¿Ya tenés cuenta?{" "}
           <Link href="/auth/login" className="text-blue-400 hover:text-blue-300">
-            Sign in
+            Iniciar sesión
           </Link>
         </p>
       </div>
