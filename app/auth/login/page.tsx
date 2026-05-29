@@ -10,8 +10,8 @@ import { loginAction } from "@/actions/auth";
 import { useToast } from "@/hooks/use-toast";
 
 const schema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1, "Password is required"),
+  email: z.string().email("Email inválido"),
+  password: z.string().min(1, "La contraseña es requerida"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -47,16 +47,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0F172A] px-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600">
             <span className="text-white font-bold text-xl">N</span>
           </div>
-          <h1 className="text-xl font-bold text-white">Welcome back</h1>
-          <p className="mt-1 text-sm text-slate-400">Sign in to Next World Cup</p>
+          <h1 className="text-xl font-bold text-white">Bienvenido de nuevo</h1>
+          <p className="mt-1 text-sm text-slate-400">Iniciá sesión en Next World Cup</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">
@@ -66,7 +64,7 @@ export default function LoginPage() {
               {...register("email")}
               type="email"
               autoComplete="email"
-              placeholder="you@email.com"
+              placeholder="vos@email.com"
               className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
             />
             {errors.email && (
@@ -76,7 +74,7 @@ export default function LoginPage() {
 
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">
-              Password
+              Contraseña
             </label>
             <input
               {...register("password")}
@@ -95,14 +93,14 @@ export default function LoginPage() {
             disabled={isPending}
             className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {isPending ? "Signing in..." : "Sign in"}
+            {isPending ? "Ingresando..." : "Iniciar sesión"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-400">
-          Don't have an account?{" "}
+          ¿No tenés cuenta?{" "}
           <Link href="/auth/register" className="text-blue-400 hover:text-blue-300">
-            Register
+            Registrarse
           </Link>
         </p>
       </div>
