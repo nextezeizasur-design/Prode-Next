@@ -1,44 +1,45 @@
-import { prisma } from "@/lib/prisma"
+"use client"
+
+import { useState, useTransition, useEffect } from "react"
 import { adminSyncFixturesAction, adminSyncLiveAction } from "@/actions/admin"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, RefreshCw, Activity, Lock } from "lucide-react"
+import { Activity, RefreshCw, Lock } from "lucide-react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 
-export const dynamic = "force-dynamic"
-
-async function syncLive() { "use server"; await adminSyncLiveAction() }
-async function syncFixtures() { "use server"; await adminSyncFixturesAction() }
-
 const STATUS_LABELS: Record<string, string> = {
-  SCHEDULED: "Programado",
-  LIVE: "En vivo",
-  FINISHED: "Finalizado",
-  POSTPONED: "Postergado",
-  CANCELLED: "Cancelado",
+  SCHEDULED: "Programado", LIVE: "En vivo", FINISHED: "Finalizado",
+  POSTPONED: "Postergado", CANCELLED: "Cancelado",
 }
 
 const PHASE_LABELS: Record<string, string> = {
-  GROUP: "Fase de Grupos",
-  ROUND_OF_32: "Ronda de 32",
-  ROUND_OF_16: "Octavos",
-  QUARTER_FINAL: "Cuartos",
-  SEMI_FINAL: "Semifinal",
-  THIRD_PLACE: "3er y 4to Puesto",
-  FINAL: "Final",
+  GROUP: "Fase de Grupos", ROUND_OF_32: "Ronda de 32", ROUND_OF_16: "Octavos",
+  QUARTER_FINAL: "Cuartos", SEMI_FINAL: "Semifinal",
+  THIRD_PLACE: "3er y 4to Puesto", FINAL: "Final",
 }
 
-export default async function AdminMatchesPage() {
-  const matches = await prisma.match.findMany({
-    include: { homeTeam: true, awayTeam: true },
-    orderBy: { kickoffAt: "asc" },
-  })
+export default function AdminMatchesPage() {
+  const [isPending, startTransition] = useTransition()
+  const [matches, setMatches] = useState<any[]>([])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  useEffect(() => { loadMatches() }, [])
+
+  async function loadMatches() {
+    const res = await fetch("/api/admin/matches")
+    if (res.ok) setMatches(await res.json())
+  }
+
+  function syncAction(fn: () => Promise<any>) {
+    startTransition(async () => {
+      await fn()
+      await loadMatches()
+    })
+  }
+
   const byPhase: Record<string, any[]> = {}
-  for (const m of matches as any[]) {
+  for (const m of matches) {
     if (!byPhase[m.phase]) byPhase[m.phase] = []
     byPhase[m.phase].push(m)
   }
@@ -51,16 +52,12 @@ export default async function AdminMatchesPage() {
           <p className="text-sm text-muted-foreground">{matches.length} partidos en total</p>
         </div>
         <div className="flex gap-2">
-          <form action={syncLive}>
-            <Button type="submit" variant="outline" size="sm" className="gap-1.5">
-              <Activity className="h-3.5 w-3.5" />Sync live
-            </Button>
-          </form>
-          <form action={syncFixtures}>
-            <Button type="submit" variant="outline" size="sm" className="gap-1.5">
-              <RefreshCw className="h-3.5 w-3.5" />Sync fixture
-            </Button>
-          </form>
+          <Button onClick={() => syncAction(adminSyncLiveAction)} disabled={isPending} variant="outline" size="sm" className="gap-1.5">
+            <Activity className="h-3.5 w-3.5" />Sync live
+          </Button>
+          <Button onClick={() => syncAction(adminSyncFixturesAction)} disabled={isPending} variant="outline" size="sm" className="gap-1.5">
+            <RefreshCw className="h-3.5 w-3.5" />Sync fixture
+          </Button>
         </div>
       </div>
 
@@ -71,23 +68,21 @@ export default async function AdminMatchesPage() {
           </h2>
           <Card>
             <CardContent className="p-0 divide-y">
-              {phaseMatches.map((match) => (
+              {phaseMatches.map((match: any) => (
                 <div key={match.id} className="flex items-center gap-3 px-4 py-3 text-sm">
                   <div className="w-28 shrink-0 text-xs text-muted-foreground">
-                    {format(match.kickoffAt, "dd/MM HH:mm", { locale: es })}
+                    {format(new Date(match.kickoffAt), "dd/MM HH:mm", { locale: es })}
                   </div>
                   <div className="flex flex-1 items-center gap-2 min-w-0">
-                    <span className="truncate text-right flex-1">{match.homeTeam.name}</span>
+                    <span className="truncate text-right flex-1">{match.homeTeam?.name}</span>
                     <span className="shrink-0 font-bold tabular-nums">
                       {match.status === "SCHEDULED" ? "vs" : `${match.homeScore ?? 0}-${match.awayScore ?? 0}`}
                     </span>
-                    <span className="truncate flex-1">{match.awayTeam.name}</span>
+                    <span className="truncate flex-1">{match.awayTeam?.name}</span>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
                     {match.predictionsLocked && <Lock className="h-3 w-3 text-muted-foreground" />}
-                    <Badge variant="outline" className="text-xs">
-                      {STATUS_LABELS[match.status] ?? match.status}
-                    </Badge>
+                    <Badge variant="outline" className="text-xs">{STATUS_LABELS[match.status] ?? match.status}</Badge>
                   </div>
                 </div>
               ))}
