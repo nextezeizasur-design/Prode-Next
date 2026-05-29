@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { MatchStatus } from "@prisma/client"
+import { MatchStatus } from "@/types/enums"
 import { adminSyncLiveAction, adminSyncFixturesAction, adminRecalculateScoresAction } from "@/actions/admin"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -66,7 +66,7 @@ export default async function AdminPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {liveMatches.map((m) => (
+            {(liveMatches as any[]).map((m) => (
               <div key={m.id} className="flex items-center justify-between rounded-lg bg-background/50 px-3 py-2 text-sm">
                 <span>{m.homeTeam.name}</span>
                 <span className="font-bold text-red-400">{m.homeScore ?? 0} - {m.awayScore ?? 0}</span>
@@ -109,7 +109,7 @@ export default async function AdminPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Últimas predicciones</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {recentPreds.map((p) => (
+            {(recentPreds as any[]).map((p) => (
               <div key={p.id} className="flex items-center justify-between text-sm">
                 <span className="font-medium">@{p.user.nickname}</span>
                 <span className="text-muted-foreground">

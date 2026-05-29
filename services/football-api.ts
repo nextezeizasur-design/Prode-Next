@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { MatchPhase, MatchStatus } from "@prisma/client";
+import type { MatchPhase, MatchStatus } from "@/types/enums";
 
 const API_FOOTBALL_BASE = "https://v3.football.api-sports.io";
 // FIFA World Cup 2026 league ID in API-Football

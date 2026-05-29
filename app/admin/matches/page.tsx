@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma"
-import { MatchStatus, MatchPhase } from "@prisma/client"
 import { adminSyncFixturesAction, adminSyncLiveAction } from "@/actions/admin"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -10,7 +9,10 @@ import { es } from "date-fns/locale"
 
 export const dynamic = "force-dynamic"
 
-const STATUS_LABELS: Record<MatchStatus, string> = {
+async function syncLive() { "use server"; await adminSyncLiveAction() }
+async function syncFixtures() { "use server"; await adminSyncFixturesAction() }
+
+const STATUS_LABELS: Record<string, string> = {
   SCHEDULED: "Programado",
   LIVE: "En vivo",
   FINISHED: "Finalizado",
@@ -18,7 +20,7 @@ const STATUS_LABELS: Record<MatchStatus, string> = {
   CANCELLED: "Cancelado",
 }
 
-const PHASE_LABELS: Record<MatchPhase, string> = {
+const PHASE_LABELS: Record<string, string> = {
   GROUP: "Fase de Grupos",
   ROUND_OF_32: "Ronda de 32",
   ROUND_OF_16: "Octavos",
@@ -28,29 +30,18 @@ const PHASE_LABELS: Record<MatchPhase, string> = {
   FINAL: "Final",
 }
 
-// Wrappers que devuelven void para usar como form actions
-async function syncLive() {
-  "use server"
-  await adminSyncLiveAction()
-}
-
-async function syncFixtures() {
-  "use server"
-  await adminSyncFixturesAction()
-}
-
 export default async function AdminMatchesPage() {
   const matches = await prisma.match.findMany({
     include: { homeTeam: true, awayTeam: true },
     orderBy: { kickoffAt: "asc" },
   })
 
-  const byPhase = matches.reduce<Record<string, typeof matches>>((acc, m) => {
-    const key = m.phase
-    if (!acc[key]) acc[key] = []
-    acc[key].push(m)
-    return acc
-  }, {})
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const byPhase: Record<string, any[]> = {}
+  for (const m of matches as any[]) {
+    if (!byPhase[m.phase]) byPhase[m.phase] = []
+    byPhase[m.phase].push(m)
+  }
 
   return (
     <div className="space-y-6">
@@ -62,14 +53,12 @@ export default async function AdminMatchesPage() {
         <div className="flex gap-2">
           <form action={syncLive}>
             <Button type="submit" variant="outline" size="sm" className="gap-1.5">
-              <Activity className="h-3.5 w-3.5" />
-              Sync live
+              <Activity className="h-3.5 w-3.5" />Sync live
             </Button>
           </form>
           <form action={syncFixtures}>
             <Button type="submit" variant="outline" size="sm" className="gap-1.5">
-              <RefreshCw className="h-3.5 w-3.5" />
-              Sync fixture
+              <RefreshCw className="h-3.5 w-3.5" />Sync fixture
             </Button>
           </form>
         </div>
@@ -78,7 +67,7 @@ export default async function AdminMatchesPage() {
       {Object.entries(byPhase).map(([phase, phaseMatches]) => (
         <div key={phase}>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            {PHASE_LABELS[phase as MatchPhase] ?? phase}
+            {PHASE_LABELS[phase] ?? phase}
           </h2>
           <Card>
             <CardContent className="p-0 divide-y">
@@ -90,18 +79,14 @@ export default async function AdminMatchesPage() {
                   <div className="flex flex-1 items-center gap-2 min-w-0">
                     <span className="truncate text-right flex-1">{match.homeTeam.name}</span>
                     <span className="shrink-0 font-bold tabular-nums">
-                      {match.status === MatchStatus.SCHEDULED
-                        ? "vs"
-                        : `${match.homeScore ?? 0}-${match.awayScore ?? 0}`}
+                      {match.status === "SCHEDULED" ? "vs" : `${match.homeScore ?? 0}-${match.awayScore ?? 0}`}
                     </span>
                     <span className="truncate flex-1">{match.awayTeam.name}</span>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    {match.predictionsLocked && (
-                      <Lock className="h-3 w-3 text-muted-foreground" />
-                    )}
+                    {match.predictionsLocked && <Lock className="h-3 w-3 text-muted-foreground" />}
                     <Badge variant="outline" className="text-xs">
-                      {STATUS_LABELS[match.status]}
+                      {STATUS_LABELS[match.status] ?? match.status}
                     </Badge>
                   </div>
                 </div>

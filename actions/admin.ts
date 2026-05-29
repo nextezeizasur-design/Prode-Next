@@ -115,8 +115,8 @@ export async function adminCreateAnnouncementAction(data: {
   });
 
   await prisma.notification.createMany({
-    data: users.map(({ id }) => ({
-      userId: id,
+    data: users.map((u: { id: string }) => ({
+      userId: u.id,
       type: "ANNOUNCEMENT" as const,
       title: data.title,
       body: data.body,
@@ -154,7 +154,7 @@ export async function adminExportRankingsAction(): Promise<
 
   const header = "Rank,Nickname,First Name,Last Name,Curso,Total Points,Exact Scores,Correct Winners,Streak";
   const rows = users.map(
-    (u, i) =>
+    (u: { nickname: string; firstName: string; lastName: string; curso: string | null; totalPoints: number; exactScores: number; correctWinner: number; streak: number }, i: number) =>
       `${i + 1},${u.nickname},${u.firstName},${u.lastName},${u.curso ?? ""},${u.totalPoints},${u.exactScores},${u.correctWinner},${u.streak}`
   );
 

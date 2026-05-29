@@ -39,9 +39,10 @@ async function main() {
     update: {},
     create: {
       id: "singleton",
-      registrationOpen: true,
-      predictionsEnabled: true,
-      maxParticipants: 0,
+      predictionsOpen: true,
+      pointsExactScore: 3,
+      pointsCorrectWinner: 1,
+      pointsSemifinalist: 2,
     },
   })
 

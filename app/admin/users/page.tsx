@@ -25,7 +25,7 @@ export default async function AdminUsersPage() {
       <Card>
         <CardContent className="p-0">
           <div className="divide-y">
-            {users.map((user) => {
+            {(users as any[]).map((user) => {
               async function toggleBlock() {
                 "use server"
                 await adminToggleBlockUserAction(user.id, !user.isBlocked)
