@@ -1,6 +1,7 @@
 import { requireAuth } from "@/lib/auth";
 import { MainNav } from "@/components/shared/main-nav";
 import { BottomNav } from "@/components/shared/bottom-nav";
+import { HowToPlay } from "@/components/shared/how-to-play";
 
 export default async function MainLayout({
   children,
@@ -11,15 +12,14 @@ export default async function MainLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Top nav — visible on desktop */}
       <MainNav user={user} />
-
-      {/* Main content with bottom padding for mobile nav */}
       <main className="mx-auto max-w-5xl px-4 pb-24 pt-6 sm:pb-6">
+        {/* How to play button */}
+        <div className="flex justify-end mb-4">
+          <HowToPlay />
+        </div>
         {children}
       </main>
-
-      {/* Bottom nav — visible on mobile */}
       <BottomNav isAdmin={user.isAdmin} />
     </div>
   );
