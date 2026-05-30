@@ -9,7 +9,7 @@ export default async function HomePage() {
     getCurrentUser(),
     prisma.announcement.findFirst({
       where: { pinned: true, active: true },
-    }),
+    }).catch(() => null),
   ]);
 
   const tournamentStart = new Date("2026-06-11T17:00:00Z");
@@ -27,12 +27,12 @@ export default async function HomePage() {
       />
 
       {/* Radial glow */}
-      <div className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-blue-500/10 blur-[120px] pointer-events-none" />
+      <div className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-[#7a3aa8]/10 blur-[120px] pointer-events-none" />
 
       {/* Navbar */}
       <nav className="relative z-10 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-blue-500 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-[#7a3aa8] flex items-center justify-center">
             <span className="text-white font-bold text-sm">N</span>
           </div>
           <span className="text-white font-semibold text-lg tracking-tight">Next</span>
@@ -42,7 +42,7 @@ export default async function HomePage() {
           {user ? (
             <Link
               href="/fixture"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 transition-colors"
+              className="rounded-lg bg-[#652f8d] px-4 py-2 text-sm font-medium text-white hover:bg-[#7a3aa8] transition-colors"
             >
               Ir al Prode
             </Link>
@@ -56,7 +56,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="/auth/register"
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 transition-colors"
+                className="rounded-lg bg-[#652f8d] px-4 py-2 text-sm font-medium text-white hover:bg-[#7a3aa8] transition-colors"
               >
                 Registrarse
               </Link>
@@ -74,16 +74,16 @@ export default async function HomePage() {
 
       {/* Hero */}
       <section className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-16 pb-24">
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
-          <span className="text-xs font-medium text-blue-400 uppercase tracking-widest">
+        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#652f8d]/30 bg-[#7a3aa8]/10 px-4 py-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#9855c8] animate-pulse" />
+          <span className="text-xs font-medium text-[#b06fd8] uppercase tracking-widest">
             FIFA World Cup 2026
           </span>
         </div>
 
         <h1 className="max-w-3xl text-5xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
           Predict the{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#9855c8] to-[#b06fd8]">
             World Cup
           </span>
         </h1>
@@ -97,7 +97,7 @@ export default async function HomePage() {
           {user ? (
             <Link
               href="/fixture"
-              className="rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white hover:bg-blue-500 transition-all duration-200 hover:scale-105 active:scale-95"
+              className="rounded-xl bg-[#652f8d] px-8 py-4 text-base font-semibold text-white hover:bg-[#7a3aa8] transition-all duration-200 hover:scale-105 active:scale-95"
             >
               Hacer predicciones →
             </Link>
@@ -105,7 +105,7 @@ export default async function HomePage() {
             <>
               <Link
                 href="/auth/register"
-                className="rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white hover:bg-blue-500 transition-all duration-200 hover:scale-105 active:scale-95"
+                className="rounded-xl bg-[#652f8d] px-8 py-4 text-base font-semibold text-white hover:bg-[#7a3aa8] transition-all duration-200 hover:scale-105 active:scale-95"
               >
                 Registrarse — es gratis
               </Link>
@@ -173,7 +173,7 @@ export default async function HomePage() {
               key={step}
               className="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-6 backdrop-blur-sm"
             >
-              <div className="mb-3 text-3xl font-bold text-blue-500/30">{step}</div>
+              <div className="mb-3 text-3xl font-bold text-[#9855c8]/30">{step}</div>
               <h3 className="mb-2 font-semibold text-white">{title}</h3>
               <p className="text-sm text-slate-400 leading-relaxed">{description}</p>
             </div>
@@ -190,7 +190,7 @@ export default async function HomePage() {
           <div className="space-y-4">
             {[
               { label: "Exact score", points: "3 pts", color: "text-yellow-400" },
-              { label: "Correct winner / draw", points: "1 pt", color: "text-blue-400" },
+              { label: "Correct winner / draw", points: "1 pt", color: "text-[#b06fd8]" },
               { label: "Cada semifinalista correcto", points: "+2 pts bonus", color: "text-green-400" },
             ].map(({ label, points, color }) => (
               <div
