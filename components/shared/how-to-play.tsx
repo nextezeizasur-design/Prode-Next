@@ -48,7 +48,7 @@ export function HowToPlay() {
                 <Star className="h-5 w-5 text-yellow-500 shrink-0" />
                 <div>
                   <p className="text-sm font-semibold">Exact score</p>
-                  <p className="text-xs text-muted-foreground">Acertás el resultado exacto</p>
+                  <p className="text-xs text-muted-foreground">Acertás el marcador exacto</p>
                 </div>
                 <span className="ml-auto text-lg font-bold text-yellow-500">3 pts</span>
               </div>
@@ -57,7 +57,7 @@ export function HowToPlay() {
                 <Target className="h-5 w-5 text-[#b06fd8] shrink-0" />
                 <div>
                   <p className="text-sm font-semibold">Correct winner / draw</p>
-                  <p className="text-xs text-muted-foreground">Acertás quién gana o que empata</p>
+                  <p className="text-xs text-muted-foreground">Acertás el ganador o el empate</p>
                 </div>
                 <span className="ml-auto text-lg font-bold text-[#b06fd8]">1 pt</span>
               </div>
@@ -65,8 +65,8 @@ export function HowToPlay() {
               <div className="flex items-center gap-3 rounded-xl bg-green-500/10 border border-green-500/20 p-3">
                 <Users className="h-5 w-5 text-green-500 shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold">Semifinalistas correctos</p>
-                  <p className="text-xs text-muted-foreground">Por cada equipo que adivinás</p>
+                  <p className="text-sm font-semibold">Correct semifinalists</p>
+                  <p className="text-xs text-muted-foreground">Por cada equipo semifinalista que adivinás</p>
                 </div>
                 <span className="ml-auto text-lg font-bold text-green-500">+2 pts</span>
               </div>
