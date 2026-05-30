@@ -32,7 +32,7 @@ export function MainNav({ user }: MainNavProps) {
     <header className="sticky top-0 z-40 border-b border-border/40 bg-background/80 backdrop-blur-md">
       <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-lg bg-blue-600 flex items-center justify-center">
+          <div className="h-7 w-7 rounded-lg bg-[#652f8d] flex items-center justify-center">
             <span className="text-white font-bold text-xs">N</span>
           </div>
           <span className="font-semibold text-sm hidden sm:block">Next World Cup</span>
@@ -60,7 +60,7 @@ export function MainNav({ user }: MainNavProps) {
             <button className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-ring">
               <Avatar className="h-8 w-8">
                 <AvatarImage src={user.avatarUrl ?? undefined} />
-                <AvatarFallback className="bg-blue-600 text-white text-xs">
+                <AvatarFallback className="bg-[#652f8d] text-white text-xs">
                   {user.nickname.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
