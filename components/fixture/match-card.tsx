@@ -89,7 +89,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
           </span>
         )}
         {!isLocked && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs text-blue-500">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[#7a3aa8]/10 px-2.5 py-0.5 text-xs text-[#9855c8]">
             <Clock className="h-3 w-3" />
             Open
           </span>
@@ -99,7 +99,10 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
       <div className="p-4">
         {/* Match info */}
         <div className="mb-1 text-xs text-muted-foreground">
-          {format(new Date(match.kickoffAt), "EEE, MMM d · HH:mm")}
+          {format(
+              new Date(new Date(match.kickoffAt).toLocaleString("en-US", { timeZone: "America/Argentina/Buenos_Aires" })),
+              "EEE, MMM d · HH:mm"
+            )}
           {match.city && ` · ${match.city}`}
         </div>
 
@@ -162,7 +165,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
                   max="99"
                   value={homeScore}
                   onChange={(e) => setHomeScore(e.target.value)}
-                  className="w-12 rounded-lg border border-border bg-background text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-12 rounded-lg border border-border bg-background text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-[#652f8d] py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="0"
                 />
                 <span className="text-muted-foreground font-medium">—</span>
@@ -172,7 +175,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
                   max="99"
                   value={awayScore}
                   onChange={(e) => setAwayScore(e.target.value)}
-                  className="w-12 rounded-lg border border-border bg-background text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-12 rounded-lg border border-border bg-background text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-[#652f8d] py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="0"
                 />
               </div>
@@ -204,7 +207,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
               prediction.isExactScore
                 ? "bg-green-500/10 text-green-600 dark:text-green-400"
                 : prediction.isCorrectWinner
-                ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                ? "bg-[#7a3aa8]/10 text-[#652f8d] dark:text-[#b06fd8]"
                 : "bg-muted text-muted-foreground"
             )}
           >
@@ -243,7 +246,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
             className={cn(
               "mt-3 w-full rounded-xl py-2.5 text-sm font-semibold transition-all",
               homeScore !== "" && awayScore !== ""
-                ? "bg-blue-600 text-white hover:bg-blue-500 active:scale-[0.98]"
+                ? "bg-[#652f8d] text-white hover:bg-[#7a3aa8] active:scale-[0.98]"
                 : "bg-muted text-muted-foreground cursor-not-allowed",
               isPending && "opacity-70 cursor-wait"
             )}
