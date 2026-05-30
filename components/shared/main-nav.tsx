@@ -32,7 +32,10 @@ export function MainNav({ user }: MainNavProps) {
     <header className="sticky top-0 z-40 border-b border-border/40 bg-background/80 backdrop-blur-md">
       <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="Next English Institute" className="h-8 w-auto" />
+          <div className="h-7 w-7 rounded-lg bg-[#652f8d] flex items-center justify-center">
+            <span className="text-white font-bold text-xs">N</span>
+          </div>
+          <span className="font-semibold text-sm hidden sm:block">Next World Cup</span>
         </Link>
 
         <div className="hidden sm:flex items-center gap-1">
