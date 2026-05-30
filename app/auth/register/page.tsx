@@ -69,7 +69,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#0F172A] px-4 py-8">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#652f8d]">
             <span className="text-white font-bold text-xl">N</span>
           </div>
           <h1 className="text-xl font-bold text-white">Crear cuenta</h1>
@@ -83,7 +83,7 @@ export default function RegisterPage() {
               <input
                 {...register("firstName")}
                 placeholder="Ana"
-                className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
+                className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-[#652f8d] focus:outline-none focus:ring-1 focus:ring-[#652f8d] transition-colors text-sm"
               />
               {errors.firstName && <p className="mt-1 text-xs text-red-400">{errors.firstName.message}</p>}
             </div>
@@ -92,7 +92,7 @@ export default function RegisterPage() {
               <input
                 {...register("lastName")}
                 placeholder="García"
-                className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
+                className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-[#652f8d] focus:outline-none focus:ring-1 focus:ring-[#652f8d] transition-colors text-sm"
               />
               {errors.lastName && <p className="mt-1 text-xs text-red-400">{errors.lastName.message}</p>}
             </div>
@@ -107,7 +107,7 @@ export default function RegisterPage() {
               <input
                 {...register("nickname", { onChange: (e) => checkNickname(e.target.value) })}
                 placeholder="goat_predictor"
-                className="w-full rounded-xl border border-slate-700 bg-slate-800/50 pl-8 pr-10 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
+                className="w-full rounded-xl border border-slate-700 bg-slate-800/50 pl-8 pr-10 py-3 text-white placeholder-slate-500 focus:border-[#652f8d] focus:outline-none focus:ring-1 focus:ring-[#652f8d] transition-colors text-sm"
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
                 {nicknameStatus === "checking" && <Loader2 className="h-4 w-4 text-slate-400 animate-spin" />}
@@ -127,7 +127,7 @@ export default function RegisterPage() {
               type="email"
               autoComplete="email"
               placeholder="vos@email.com"
-              className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
+              className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-[#652f8d] focus:outline-none focus:ring-1 focus:ring-[#652f8d] transition-colors text-sm"
             />
             {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
           </div>
@@ -139,7 +139,7 @@ export default function RegisterPage() {
               type="password"
               autoComplete="new-password"
               placeholder="Mín. 8 caracteres"
-              className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
+              className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-[#652f8d] focus:outline-none focus:ring-1 focus:ring-[#652f8d] transition-colors text-sm"
             />
             {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
           </div>
@@ -151,14 +151,14 @@ export default function RegisterPage() {
             <input
               {...register("curso")}
               placeholder="ej. Upper Intermediate B"
-              className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
+              className="w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-white placeholder-slate-500 focus:border-[#652f8d] focus:outline-none focus:ring-1 focus:ring-[#652f8d] transition-colors text-sm"
             />
           </div>
 
           <button
             type="submit"
             disabled={isPending || nicknameStatus === "taken"}
-            className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full rounded-xl bg-[#652f8d] py-3 text-sm font-semibold text-white hover:bg-[#7a3aa8] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isPending ? "Creando cuenta..." : "Crear cuenta"}
           </button>
@@ -166,7 +166,7 @@ export default function RegisterPage() {
 
         <p className="mt-6 text-center text-sm text-slate-400">
           ¿Ya tenés cuenta?{" "}
-          <Link href="/auth/login" className="text-blue-400 hover:text-blue-300">
+          <Link href="/auth/login" className="text-[#b06fd8] hover:text-[#c490e4]">
             Iniciar sesión
           </Link>
         </p>
