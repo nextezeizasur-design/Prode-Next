@@ -189,6 +189,30 @@ export async function adminGetUsersAction() {
 /**
  * Delete all data and reset tournament (DANGER).
  */
+
+export async function adminDeleteUserAction(userId: string): Promise<ActionResponse> {
+  await requireAdmin();
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { supabaseId: true, isAdmin: true },
+  });
+
+  if (!user) return { success: false, error: "User not found" };
+  if (user.isAdmin) return { success: false, error: "Cannot delete admin users" };
+
+  // Delete from public.users (cascade deletes predictions, etc.)
+  await prisma.user.delete({ where: { id: userId } });
+
+  // Delete from Supabase Auth
+  const { createAdminClient } = await import("@/lib/supabase/server");
+  const supabase = await createAdminClient();
+  await supabase.auth.admin.deleteUser(user.supabaseId);
+
+  revalidatePath("/admin/users");
+  return { success: true, data: undefined };
+}
+
 export async function adminResetTournamentAction(): Promise<ActionResponse> {
   await requireAdmin();
 
