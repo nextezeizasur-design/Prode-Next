@@ -30,7 +30,7 @@ export function BottomNav({ isAdmin }: BottomNavProps) {
               href={href}
               className={cn(
                 "flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-colors min-w-0",
-                isActive ? "text-blue-400" : "text-muted-foreground"
+                isActive ? "text-[#b06fd8]" : "text-muted-foreground"
               )}
             >
               <Icon className={cn("h-5 w-5 transition-transform", isActive && "scale-110")} />
