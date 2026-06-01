@@ -20,9 +20,9 @@ const podium = [
     label: "2.° puesto",
     accent: "border-slate-400/30 bg-slate-400/5",
     prizes: [
-      { icon: "ball",   text: "Pelota de fútbol (medida 5)",             type: "material" },
-      { icon: "exam",   text: "Examen final 75% bonificado (1 nivel)",   type: "academic" },
-      { icon: "cuota",  text: "10% descuento en la próxima cuota",       type: "cuota"    },
+      { icon: "ball",   text: "Pelota de fútbol (medida 5)",            type: "material" },
+      { icon: "exam",   text: "Examen final 75% bonificado (1 nivel)",  type: "academic" },
+      { icon: "cuota",  text: "10% descuento en la próxima cuota",      type: "cuota"    },
     ],
   },
   {
@@ -31,9 +31,9 @@ const podium = [
     label: "3.° puesto",
     accent: "border-orange-400/30 bg-orange-400/5",
     prizes: [
-      { icon: "trophy", text: "Artículo deportivo",                      type: "material" },
-      { icon: "exam",   text: "Examen final 50% bonificado (1 nivel)",   type: "academic" },
-      { icon: "cuota",  text: "5% descuento en la próxima cuota",        type: "cuota"    },
+      { icon: "trophy", text: "Artículo deportivo",                     type: "material" },
+      { icon: "exam",   text: "Examen final 50% bonificado (1 nivel)",  type: "academic" },
+      { icon: "cuota",  text: "5% descuento en la próxima cuota",       type: "cuota"    },
     ],
   },
 ];
@@ -92,12 +92,14 @@ export default function PremiosPage() {
       />
       <div className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-[#652f8d]/10 blur-[120px] pointer-events-none" />
 
-      {/* Navbar mínimo */}
+      {/* Navbar */}
       <nav className="relative z-10 flex items-center justify-between px-6 py-5 max-w-2xl mx-auto">
         <Link href="/" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
           ← Volver
         </Link>
-        <img src="/logo.png" alt="Next English Institute" className="h-7 w-auto" />
+        <div className="h-8 w-8 rounded-lg bg-[#652f8d] flex items-center justify-center">
+          <span className="text-white font-bold text-sm">N</span>
+        </div>
       </nav>
 
       <div className="relative z-10 mx-auto max-w-2xl px-4 pb-20 pt-2">
@@ -117,23 +119,15 @@ export default function PremiosPage() {
           </p>
         </div>
 
-        {/* Leyenda */}
-        <div className="mb-6 flex flex-wrap justify-center gap-3 text-xs text-slate-500">
-          <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-amber-400"></span>Premio material</span>
-          <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-purple-500"></span>Beneficio académico</span>
-          <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-emerald-500"></span>Descuento en cuota</span>
-          <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-sky-500"></span>Diploma</span>
-        </div>
-
-        {/* Podio */}
-        <div className="mb-4 grid gap-3 sm:grid-cols-3">
+        {/* Podio — orden fijo: 1° siempre primero */}
+        <div className="mb-4 flex flex-col gap-3 sm:grid sm:grid-cols-3">
           {podium.map((p) => (
             <div
               key={p.place}
               className={cn(
                 "rounded-2xl border p-4",
                 p.accent,
-                p.place === 1 && "sm:order-2 sm:scale-[1.03]"
+                p.place === 1 && "sm:col-start-2 sm:row-start-1"
               )}
             >
               <div className="mb-3 flex items-center gap-2">
