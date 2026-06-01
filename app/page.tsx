@@ -33,7 +33,7 @@ export default async function HomePage() {
       {/* Navbar */}
       <nav className="relative z-10 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="Next English Institute" className="h-8 w-auto" />
+          <div className="h-8 w-8 rounded-lg bg-[#652f8d] flex items-center justify-center"><span className="text-white font-bold text-sm">N</span></div>
         </div>
         <div className="flex items-center gap-3">
           {user ? (
