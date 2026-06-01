@@ -127,7 +127,7 @@ export default function PremiosPage() {
               className={cn(
                 "rounded-2xl border p-4",
                 p.accent,
-                p.place === 1 && "sm:col-start-2 sm:row-start-1"
+                false
               )}
             >
               <div className="mb-3 flex items-center gap-2">
