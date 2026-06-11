@@ -18,7 +18,7 @@ async function getStats() {
     prisma.prediction.count(),
     prisma.match.findMany({ where: { status: "LIVE" }, include: { homeTeam: true, awayTeam: true } }),
     prisma.prediction.findMany({
-      take: 5,
+      take: 20,
       orderBy: { createdAt: "desc" },
       include: { user: true, match: { include: { homeTeam: true, awayTeam: true } } },
     }),
