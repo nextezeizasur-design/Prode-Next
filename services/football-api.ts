@@ -103,6 +103,8 @@ export async function syncLiveMatches(): Promise<{
       (g) => g.finished === "TRUE" || g.time_elapsed !== "notstarted"
     );
 
+    const now = new Date();
+
     for (const game of activeGames) {
       try {
         const status = mapStatus(game);
@@ -110,6 +112,12 @@ export async function syncLiveMatches(): Promise<{
 
         if (!match) {
           errors.push(`No DB match found for: ${game.home_team_name_en} vs ${game.away_team_name_en}`);
+          continue;
+        }
+
+        // Guard: never update a match whose kickoff is still in the future
+        if (match.kickoffAt > now) {
+          errors.push(`Skipping future match (bad API data): ${game.home_team_name_en} vs ${game.away_team_name_en}`);
           continue;
         }
 
