@@ -39,7 +39,6 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
     new Date() >= new Date(match.kickoffAt);
 
   const isFinished = match.status === "FINISHED";
-  console.log('kickoffAt:', match.kickoffAt, 'now:', new Date(), 'isLocked:', isLocked);
   const handleSubmit = () => {
     const h = parseInt(homeScore);
     const a = parseInt(awayScore);
