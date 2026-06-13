@@ -36,9 +36,11 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
   const isLocked =
     match.predictionsLocked ||
     match.status !== "SCHEDULED" ||
-    new Date() >= new Date(match.kickoffAt);
+    new Date() >= match.kickoffAt;
 
   const isFinished = match.status === "FINISHED";
+  const isLive = match.status === "LIVE";
+
   const handleSubmit = () => {
     const h = parseInt(homeScore);
     const a = parseInt(awayScore);
