@@ -1,17 +1,19 @@
+import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
 import { FixturePhaseSection } from "@/components/fixture/fixture-phase-section";
+import { FixtureSkeleton } from "@/components/fixture/fixture-skeleton";
 import { SemifinalistPicksCard } from "@/components/fixture/semifinalist-picks-card";
 import type { MatchPhase } from "@/types";
 
 const PHASE_ORDER: MatchPhase[] = [
-  "GROUP",
   "ROUND_OF_32",
   "ROUND_OF_16",
   "QUARTER_FINAL",
   "SEMI_FINAL",
   "THIRD_PLACE",
   "FINAL",
+  "GROUP",
 ];
 
 const PHASE_LABELS: Record<MatchPhase, string> = {
@@ -29,7 +31,7 @@ export const dynamic = "force-dynamic";
 export default async function FixturePage() {
   const user = await requireAuth();
 
-  const [matches, userPredictions, semiPicks, teams] = await Promise.all([
+  const [matches, userPredictions, semiPicks] = await Promise.all([
     prisma.match.findMany({
       include: { homeTeam: true, awayTeam: true },
       orderBy: { kickoffAt: "asc" },
@@ -41,9 +43,9 @@ export default async function FixturePage() {
       where: { userId: user.id },
       include: { team: true },
     }),
-    prisma.team.findMany({ orderBy: { name: "asc" } }),
   ]);
 
+  // Group matches by phase
   const byPhase = PHASE_ORDER.reduce(
     (acc, phase) => {
       const phaseMatches = matches.filter((m) => m.phase === phase);
@@ -53,51 +55,84 @@ export default async function FixturePage() {
     {} as Record<MatchPhase, typeof matches>
   );
 
+  // Build prediction map for quick lookup
   const predMap = Object.fromEntries(
     userPredictions.map((p) => [p.matchId, p])
   );
 
-  const semiTeamIds = new Set(semiPicks.map((s) => s.teamId));
-  const semiTeams = semiPicks.map((s) => s.team);
-
-  // Check if semis have started
-  const firstSemi = matches.find((m) => m.phase === "SEMI_FINAL");
-  const semiLocked = firstSemi
-    ? firstSemi.predictionsLocked || firstSemi.kickoffAt <= new Date()
-    : false;
-
-  if (matches.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="text-5xl mb-4">⚽</div>
-        <h2 className="text-xl font-semibold text-white mb-2">
-          Fixture no disponible todavía
-        </h2>
-        <p className="text-slate-400 text-sm max-w-sm">
-          Los partidos se cargarán próximamente. ¡Volvé antes del 11 de junio!
-        </p>
-      </div>
-    );
-  }
+  const knockoutPhases = PHASE_ORDER.filter((p) => p !== "GROUP");
 
   return (
-    <div className="space-y-8 pb-8">
-      {/* Semifinalist picks */}
-      <SemifinalistPicksCard
-        currentPicks={semiPicks.map(s => ({ teamId: s.teamId, team: s.team, isCorrect: s.isCorrect, bonusPoints: s.bonusPoints }))}
-        allTeams={teams.map(t => ({ id: t.id, name: t.name, shortName: t.shortName ?? t.code ?? t.name.slice(0,3), flagUrl: t.flagUrl }))}
-      />
+    <div className="space-y-8">
+      {/* Page header */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Fixture</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Predict match results before kickoff to earn points.
+        </p>
+      </div>
 
-      {/* Phases */}
-      {PHASE_ORDER.filter((phase) => byPhase[phase]).map((phase) => (
-        <FixturePhaseSection
-          key={phase}
-          phase={phase}
-          label={PHASE_LABELS[phase]}
-          matches={byPhase[phase]}
-          predictionMap={predMap}
+      {/* Semifinalist picks */}
+      <Suspense fallback={<FixtureSkeleton rows={1} />}>
+        <SemifinalistPicksCard
+          currentPicks={semiPicks}
+          allTeams={await prisma.team.findMany({ orderBy: { name: "asc" } })}
         />
-      ))}
+      </Suspense>
+
+      {/* Matches by phase */}
+      {Object.entries(byPhase).length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="text-5xl mb-4">⚽</div>
+          <h3 className="text-lg font-semibold">No matches yet</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Fixtures will appear here once the draw is complete.
+          </p>
+        </div>
+      ) : (
+        <Suspense fallback={<FixtureSkeleton rows={3} />}>
+          {/* Knockout phases */}
+          {knockoutPhases
+            .filter((phase) => byPhase[phase])
+            .map((phase) => (
+              <FixturePhaseSection
+                key={phase}
+                phase={phase}
+                label={PHASE_LABELS[phase]}
+                matches={byPhase[phase]}
+                predictionMap={predMap}
+              />
+            ))}
+
+          {/* Group stage archived */}
+          {byPhase["GROUP"] && (
+            <details className="group">
+              <summary className="flex items-center gap-2 cursor-pointer list-none select-none py-2">
+                <span className="text-lg font-semibold">Group Stage</span>
+                <span className="text-xs text-muted-foreground border rounded px-2 py-0.5">
+                  Archivada
+                </span>
+                <svg
+                  className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="mt-4">
+                <FixturePhaseSection
+                  phase="GROUP"
+                  label="Group Stage"
+                  matches={byPhase["GROUP"]}
+                  predictionMap={predMap}
+                />
+              </div>
+            </details>
+          )}
+        </Suspense>
+      )}
     </div>
   );
 }
