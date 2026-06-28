@@ -22,6 +22,25 @@ interface MatchCardProps {
   prediction?: PredictionData | null;
 }
 
+function TeamFlag({ flagUrl, name, size = 48 }: { flagUrl: string; name: string; size?: number }) {
+  const isTbd = !flagUrl || name === "TBD";
+  if (isTbd) {
+    return (
+      <div
+        className="flex items-center justify-center rounded-full bg-muted text-muted-foreground font-bold text-lg"
+        style={{ width: size, height: size }}
+      >
+        ?
+      </div>
+    );
+  }
+  return (
+    <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
+      <Image src={flagUrl} alt={name} fill className="object-contain" sizes={`${size}px`} />
+    </div>
+  );
+}
+
 export function MatchCard({ match, prediction }: MatchCardProps) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -89,7 +108,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
           </span>
         )}
         {!isLocked && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#7a3aa8]/10 px-2.5 py-0.5 text-xs text-[#9855c8]">
+          <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs text-blue-500">
             <Clock className="h-3 w-3" />
             Open
           </span>
@@ -99,10 +118,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
       <div className="p-4">
         {/* Match info */}
         <div className="mb-1 text-xs text-muted-foreground">
-          {format(
-              new Date(new Date(match.kickoffAt).toLocaleString("en-US", { timeZone: "America/Argentina/Buenos_Aires" })),
-              "EEE, MMM d · HH:mm"
-            )}
+          {format(new Date(match.kickoffAt), "EEE, MMM d · HH:mm")}
           {match.city && ` · ${match.city}`}
         </div>
 
@@ -110,35 +126,21 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
         <div className="flex items-center justify-between gap-4 my-4">
           {/* Home team */}
           <div className="flex flex-1 flex-col items-center gap-2 min-w-0">
-            <div className="relative h-12 w-12 flex-shrink-0">
-              <Image
-                src={match.homeTeam.flagUrl}
-                alt={match.homeTeam.name}
-                fill
-                className="object-contain"
-                sizes="48px"
-              />
-            </div>
+            <TeamFlag flagUrl={match.homeTeam.flagUrl} name={match.homeTeam.name} size={48} />
             <span className="text-sm font-medium text-center truncate max-w-full">
-              {match.homeTeam.shortName}
+              {match.homeTeam.shortName === "TBD" ? "Por definir" : match.homeTeam.shortName}
             </span>
           </div>
 
           {/* Score / input */}
           <div className="flex items-center gap-2 flex-shrink-0">
             {isFinished ? (
-              // Show actual result
               <div className="flex items-center gap-1.5">
-                <span className="text-2xl font-bold tabular-nums">
-                  {match.homeScore}
-                </span>
+                <span className="text-2xl font-bold tabular-nums">{match.homeScore}</span>
                 <span className="text-muted-foreground">—</span>
-                <span className="text-2xl font-bold tabular-nums">
-                  {match.awayScore}
-                </span>
+                <span className="text-2xl font-bold tabular-nums">{match.awayScore}</span>
               </div>
             ) : isLocked ? (
-              // Locked — show user's prediction or placeholder
               <div className="flex items-center gap-1.5">
                 {prediction ? (
                   <>
@@ -151,13 +153,10 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
                     </span>
                   </>
                 ) : (
-                  <span className="text-xs text-muted-foreground">
-                    No prediction
-                  </span>
+                  <span className="text-xs text-muted-foreground">No prediction</span>
                 )}
               </div>
             ) : (
-              // Open prediction inputs
               <div className="flex items-center gap-2">
                 <input
                   type="number"
@@ -165,7 +164,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
                   max="99"
                   value={homeScore}
                   onChange={(e) => setHomeScore(e.target.value)}
-                  className="w-12 rounded-lg border border-border bg-background text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-[#652f8d] py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-12 rounded-lg border border-border bg-background text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="0"
                 />
                 <span className="text-muted-foreground font-medium">—</span>
@@ -175,7 +174,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
                   max="99"
                   value={awayScore}
                   onChange={(e) => setAwayScore(e.target.value)}
-                  className="w-12 rounded-lg border border-border bg-background text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-[#652f8d] py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-12 rounded-lg border border-border bg-background text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="0"
                 />
               </div>
@@ -184,17 +183,9 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
 
           {/* Away team */}
           <div className="flex flex-1 flex-col items-center gap-2 min-w-0">
-            <div className="relative h-12 w-12 flex-shrink-0">
-              <Image
-                src={match.awayTeam.flagUrl}
-                alt={match.awayTeam.name}
-                fill
-                className="object-contain"
-                sizes="48px"
-              />
-            </div>
+            <TeamFlag flagUrl={match.awayTeam.flagUrl} name={match.awayTeam.name} size={48} />
             <span className="text-sm font-medium text-center truncate max-w-full">
-              {match.awayTeam.shortName}
+              {match.awayTeam.shortName === "TBD" ? "Por definir" : match.awayTeam.shortName}
             </span>
           </div>
         </div>
@@ -207,7 +198,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
               prediction.isExactScore
                 ? "bg-green-500/10 text-green-600 dark:text-green-400"
                 : prediction.isCorrectWinner
-                ? "bg-[#7a3aa8]/10 text-[#652f8d] dark:text-[#b06fd8]"
+                ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
                 : "bg-muted text-muted-foreground"
             )}
           >
@@ -226,15 +217,12 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
                 <>
                   <XCircle className="h-4 w-4" />
                   <span>
-                    You predicted {prediction.predictedHomeScore}–
-                    {prediction.predictedAwayScore}
+                    You predicted {prediction.predictedHomeScore}–{prediction.predictedAwayScore}
                   </span>
                 </>
               )}
             </div>
-            <span className="font-semibold">
-              +{prediction.pointsEarned} pts
-            </span>
+            <span className="font-semibold">+{prediction.pointsEarned} pts</span>
           </div>
         )}
 
@@ -246,7 +234,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
             className={cn(
               "mt-3 w-full rounded-xl py-2.5 text-sm font-semibold transition-all",
               homeScore !== "" && awayScore !== ""
-                ? "bg-[#652f8d] text-white hover:bg-[#7a3aa8] active:scale-[0.98]"
+                ? "bg-blue-600 text-white hover:bg-blue-500 active:scale-[0.98]"
                 : "bg-muted text-muted-foreground cursor-not-allowed",
               isPending && "opacity-70 cursor-wait"
             )}
